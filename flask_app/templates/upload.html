@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Apple Classifier</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+        color: #333;
+        background: url("{{ url_for('static', filename='images/homeapple.jpg') }}")
+          no-repeat center center/cover;
+      }
+      .container {
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
+        border-radius: 6px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(30px);
+      }
+      h1 {
+        font-size: 24px;
+        text-align: center;
+        color: #000000;
+        margin-bottom: 20px;
+      }
+      h2 {
+        font-size: 20px;
+        text-align: center;
+        margin-bottom: 10px;
+        color: #000000;
+      }
+      p {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 14px;
+        color: #000000;
+      }
+      .alert {
+        padding: 10px;
+        margin-bottom: 20px;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+      .alert-success {
+        background-color: #e6f7e6;
+        color: #2c662d;
+      }
+      .alert-danger {
+        background-color: #f8e6e6;
+        color: #a94442;
+      }
+      .form-group {
+        margin-bottom: 15px;
+        text-align: center;
+      }
+      label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: bold;
+      }
+      input[type="file"] {
+        font-size: 14px;
+        text-align: center;
+      }
+      #preview {
+        margin-top: 15px;
+        text-align: center;
+      }
+      #preview img {
+        max-width: 100%;
+        max-height: 300px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 5px;
+      }
+      .btn {
+        display: block;
+        width: 100%;
+        padding: 12px;
+        background-color: #007bff;
+        color: #fff;
+        font-size: 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 10px;
+      }
+      .btn:hover {
+        background-color: #0056b3;
+      }
+      .loading-message {
+        text-align: center;
+        font-size: 14px;
+        color: #555;
+        margin-top: 10px;
+        display: none;
+      }
+      .result {
+        margin-top: 20px;
+        text-align: center;
+        font-size: 18px;
+        color: #444;
+      }
+      a {
+        display: block;
+        text-align: center;
+        margin-top: 20px;
+        color: #033f84;
+        text-decoration: none;
+        font-size: 16px;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Welcome, {{ session['username'] }}!</h2>
+      <p>Ready to classify your apples?</p>
+
+      <h1>Upload an Apple Image</h1>
+
+      <!-- Flash messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %} {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">{{ message }}</div>
+      {% endfor %} {% endif %} {% endwith %}
+
+      <!-- Upload Form -->
+      <form
+        action="{{ url_for('upload') }}"
+        method="POST"
+        enctype="multipart/form-data"
+        onsubmit="showLoadingMessage()"
+      >
+        <div class="form-group">
+          <label for="file">Choose an image:</label>
+          <input
+            type="file"
+            name="file"
+            id="file"
+            accept="image/*"
+            onchange="previewImage(event)"
+            required
+          />
+        </div>
+        <div id="preview"></div>
+        <button type="submit" class="btn">Predict</button>
+        <p class="loading-message" id="loading-message">
+          This may take a few seconds...
+        </p>
+      </form>
+
+      <!-- Display Predicted Class -->
+      {% if predicted_class %}
+      <div class="result">
+        <h2>Predicted Class: {{ predicted_class }}</h2>
+      </div>
+      {% endif %}
+
+      <a href="{{ url_for('logout') }}">Logout ^_^</a>
+    </div>
+
+    <script>
+      function previewImage(event) {
+        const file = event.target.files[0];
+        const preview = document.getElementById("preview");
+
+        // Clear any existing preview
+        preview.innerHTML = "";
+
+        if (file) {
+          const reader = new FileReader();
+
+          reader.onload = function (e) {
+            const img = document.createElement("img");
+            img.src = e.target.result;
+            preview.appendChild(img);
+          };
+
+          reader.readAsDataURL(file);
+        }
+      }
+
+      function showLoadingMessage() {
+        const loadingMessage = document.getElementById("loading-message");
+        loadingMessage.style.display = "block";
+      }
+    </script>
+  </body>
+</html>

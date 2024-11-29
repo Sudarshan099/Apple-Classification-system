@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <script>
+      function validateForm(event) {
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+        const errorElement = document.getElementById("error-message");
+
+        // Reset error message
+        errorElement.textContent = "";
+
+        // Check username length
+        if (username.length < 4 || username.length > 20) {
+          errorElement.textContent =
+            "Username must be between 4 and 20 characters.";
+          event.preventDefault();
+          return false;
+        }
+
+        // Check password length
+        if (password.length < 6) {
+          errorElement.textContent =
+            "Password must be at least 6 characters long.";
+          event.preventDefault();
+          return false;
+        }
+
+        return true;
+      }
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Register</h1>
+      <form action="/register" method="POST" onsubmit="validateForm(event)">
+        <input
+          id="username"
+          type="text"
+          name="username"
+          placeholder="Enter a Username"
+          required
+        />
+        <input
+          id="password"
+          type="password"
+          name="password"
+          placeholder="Enter a Password"
+          required
+        />
+        <button type="submit">Register</button>
+      </form>
+      <p id="error-message" style="color: red; margin-top: 10px"></p>
+      <p>Already have an account? <a href="/">Login here</a></p>
+    </div>
+  </body>
+</html>
