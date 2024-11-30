@@ -10,7 +10,7 @@ from tensorflow.keras.applications import DenseNet201
 
 # Flask app setup
 app = Flask(__name__)
-app.secret_key = 'secure_key_for_session'
+app.secret_key = 'session_for_apple'
 
 # Database configuration
 app.config['MYSQL_HOST'] = 'localhost'
@@ -42,9 +42,8 @@ def allowed_file(filename):
 
 # Routes
 @app.route('/')
-def home():
-    """Render the login page."""
-    return render_template('login.html')
+def home(): # Debug login state
+    return render_template('index.html')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -70,23 +69,33 @@ def register():
 def login():
     """Handle user login."""
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
+        username = request.form.get('username').strip()  # Strip whitespace
+        password = request.form.get('password')
+
+        if not username or not password:
+            flash('Username and password are required.', 'warning')
+            return redirect(url_for('login'))
 
         try:
+            # Connect to the database and fetch user details
             cur = mysql.connection.cursor()
-            cur.execute("SELECT * FROM users WHERE username = %s", [username])
+            cur.execute("SELECT username, password FROM users WHERE username = %s", (username,))
             user = cur.fetchone()
             cur.close()
 
-            if user and bcrypt.check_password_hash(user[2], password):
-                session['username'] = username
+            # Validate credentials
+            if user and bcrypt.check_password_hash(user[1], password):  # Assuming password hash is in the second column
+                session['username'] = username  # Store username in the session
+                print("Session set after login:", session) 
                 flash('Login successful', 'success')
-                return redirect(url_for('upload'))
+                return redirect(url_for('upload'))  # Redirect to the upload page
             else:
-                flash('Invalid credentials', 'danger')
+                flash('Invalid username or password.', 'danger')
+
         except Exception as e:
-            flash(f"Error during login: {e}", 'danger')
+            flash(f"An error occurred during login: {e}", 'danger')
+            app.logger.error(f"Login error: {e}")  # Log the error for debugging
+
     return render_template('login.html')
 
 @app.route('/upload', methods=['GET', 'POST'])
@@ -132,7 +141,7 @@ def upload():
                     5: 'apple_golden_3',
                     6: 'apple_granny_smith_1',
                     7: 'apple_hit_1',
-                    8: 'apple_pink_lady_1',
+                    8: 'apple_pink_lady_1',   
                     9: 'apple_red_1',
                     10: 'apple_red_2',
                     11: 'apple_red_3',
@@ -157,4 +166,4 @@ def logout():
     return redirect(url_for('home'))
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)

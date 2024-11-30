@@ -16,7 +16,7 @@
       }
       .container {
         max-width: 600px;
-        margin: 40px auto;
+        margin: 60px auto;
         padding: 20px;
         background: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
         border-radius: 6px;
@@ -64,9 +64,36 @@
         margin-bottom: 10px;
         font-weight: bold;
       }
-      input[type="file"] {
-        font-size: 14px;
+      .file-label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        width: 100%;
+        height: 50px;
+        background-color: #f4f4f4;
+        border: 2px dashed #007bff;
+        border-radius: 8px;
+        color: #555;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s, border-color 0.3s;
         text-align: center;
+      }
+      .file-label:hover {
+        background-color: #eef5ff;
+        border-color: #0056b3;
+      }
+      .file-label input[type="file"] {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+      }
+      #file-name {
+        font-size: 16px;
+        color: #333;
       }
       #preview {
         margin-top: 15px;
@@ -107,20 +134,11 @@
         font-size: 18px;
         color: #444;
       }
-      a {
-        display: block;
-        text-align: center;
-        margin-top: 20px;
-        color: #033f84;
-        text-decoration: none;
-        font-size: 16px;
-      }
-      a:hover {
-        text-decoration: underline;
-      }
     </style>
   </head>
   <body>
+    {% include 'header.html' %}
+
     <div class="container">
       <h2>Welcome, {{ session['username'] }}!</h2>
       <p>Ready to classify your apples?</p>
@@ -141,15 +159,17 @@
         onsubmit="showLoadingMessage()"
       >
         <div class="form-group">
-          <label for="file">Choose an image:</label>
-          <input
-            type="file"
-            name="file"
-            id="file"
-            accept="image/*"
-            onchange="previewImage(event)"
-            required
-          />
+          <label for="file" class="file-label">
+            <span id="file-name">Choose an Apple image...</span>
+            <input
+              type="file"
+              name="file"
+              id="file"
+              accept="image/*"
+              onchange="previewImage(event)"
+              required
+            />
+          </label>
         </div>
         <div id="preview"></div>
         <button type="submit" class="btn">Predict</button>
@@ -164,14 +184,16 @@
         <h2>Predicted Class: {{ predicted_class }}</h2>
       </div>
       {% endif %}
-
-      <a href="{{ url_for('logout') }}">Logout ^_^</a>
     </div>
 
     <script>
       function previewImage(event) {
         const file = event.target.files[0];
         const preview = document.getElementById("preview");
+        const fileName = document.getElementById("file-name");
+
+        // Update the file name text
+        fileName.textContent = file ? file.name : "Choose an image...";
 
         // Clear any existing preview
         preview.innerHTML = "";
@@ -188,10 +210,8 @@
           reader.readAsDataURL(file);
         }
       }
-
       function showLoadingMessage() {
-        const loadingMessage = document.getElementById("loading-message");
-        loadingMessage.style.display = "block";
+        document.getElementById("loading-message").style.display = "block";
       }
     </script>
   </body>

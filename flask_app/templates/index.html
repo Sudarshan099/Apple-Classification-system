@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Apple Varieties</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+        color: #333;
+        background: url("{{ url_for('static', filename='images/homeapple.jpg') }}")
+          no-repeat center center/cover;
+      }
+      .container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      .card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: transform 0.2s;
+      }
+      .card:hover {
+        transform: scale(1.05);
+      }
+      .card img {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+      .card-content {
+        padding: 15px;
+        text-align: center;
+      }
+      .card-content h3 {
+        margin: 0;
+        font-size: 1.2em;
+        color: #2d3436;
+      }
+      .card-content p {
+        margin: 10px 0 0;
+        font-size: 0.9em;
+        color: #636e72;
+      }
+    </style>
+  </head>
+  <body>
+    {% include 'header.html' %}
+    
+    <div class="container">
+      <div class="card">
+        <img
+          src="{{ url_for('static', filename='images/apple_crimson_snow.png') }}"
+          alt="Crimson Snow Apple"
+        />
+        <div class="card-content">
+          <h3>Crimson Snow</h3>
+          <p>Sweet and crunchy apple variety.</p>
+        </div>
+      </div>
+      <div class="card">
+        <img
+          src="{{ url_for('static', filename='images/Red_delicious.png') }}"
+          alt="Red Delicious Apple"
+        />
+        <div class="card-content">
+          <h3>Red Delicious</h3>
+          <p>Classic red apple with a mild sweet flavor.</p>
+        </div>
+      </div>
+      <div class="card">
+        <img
+          src="{{ url_for('static', filename='images/granny smith.jpg') }}"
+          alt="Granny Smith Apple"
+        />
+        <div class="card-content">
+          <h3>Granny Smith</h3>
+          <p>Perfectly tart and crisp green apple.</p>
+        </div>
+      </div>
+      <div class="card">
+        <img
+          src="{{ url_for('static', filename='images/pink_lady.jpg') }}"
+          alt="Pink Lady Apple"
+        />
+        <div class="card-content">
+          <h3>Pink Lady</h3>
+          <p>Sweet with a hint of tartness, very refreshing.</p>
+        </div>
+      </div>
+      <div class="card">
+        <img
+          src="{{ url_for('static', filename='images/braeburn_apple.jpg') }}"
+          alt="Braeburn Apple"
+        />
+        <div class="card-content">
+          <h3>Braeburn</h3>
+          <p>
+            Braeburn apples are crisp, tangy-sweet, and aromatic, known for
+            their balanced flavor and versatility.
+          </p>
+        </div>
+      </div>
+      <div class="card">
+        <img
+          src="{{ url_for('static', filename='images/golden_apple.jpg') }}"
+          alt="Golden Apple"
+        />
+        <div class="card-content">
+          <h3>Golden</h3>
+          <p>
+            Golden apples are sweet, crisp, and juicy with a thin, golden-yellow
+            skin, ideal for snacking and baking.
+          </p>
+        </div>
+      </div>
+      <div class="card">
+        <img
+          src="{{ url_for('static', filename='images/apple_red.jpg') }}"
+          alt="Red Apple"
+        />
+        <div class="card-content">
+          <h3>Red</h3>
+          <p>
+            Red apples are sweet, crisp, and vibrant, often enjoyed fresh and in
+            desserts.
+          </p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

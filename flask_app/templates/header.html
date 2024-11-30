@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Apple Varieties</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+        color: #333;
+        background: url("{{ url_for('static', filename='images/homeapple.jpg') }}")
+          no-repeat center center/cover;
+      }
+      header {
+        display: flex;
+        text-align: center;
+        padding: 20px;
+        background-color: #031427;
+        color: white;
+        justify-content: space-around;
+      }
+      header h1 {
+        color: white;
+      }
+      header p {
+        color: white;
+      }
+      .links {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+      }
+      a {
+        font-size: 14px;
+        text-decoration: none;
+        background-color: #031427;
+        color: #fff;
+        padding: 10px 15px;
+        border-radius: 4px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        transition: background-color 0.3s;
+      }
+
+      a:hover {
+        background-color: #b30000;
+      }
+      .about-link {
+        font-size: 14px;
+        text-decoration: none;
+        background-color: #031427;
+        color: #fff;
+        padding: 10px 15px;
+        border-radius: 4px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        transition: background-color 0.3s;
+      }
+      .about-link:hover {
+        background-color: #0056b3;
+      }
+      .about-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+      }
+      .about-content {
+        background: #fff;
+        padding: 20px;
+        max-width: 500px;
+        border-radius: 6px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: justify;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      }
+      .about-content h2 {
+        margin-top: 0;
+        color: #333;
+      }
+      .about-content p {
+        font-size: 14px;
+        color: #666;
+        line-height: 1.5;
+        text-align: justify;
+      }
+      .close-modal {
+        margin-top: 10px;
+        background: #007bff;
+        color: #fff;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .close-modal:hover {
+        background: #0056b3;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div>
+        <h1>Apple Varieties</h1>
+        <p>Explore different types of apples and predict your apples</p>
+      </div>
+      <div class="links">
+        {% if session.username %}
+        <!-- Show Logout button -->
+        <a href="{{ url_for('logout') }}">Logout</a>
+        <!-- Show About Us button -->
+        <a href="#" class="about-link" onclick="openAboutModal()">About Us</a>
+        {% else %}
+        <!-- Show Predict your Apple button -->
+        <a class="about-link" href="/login">Predict your Apple!</a>
+        <!-- Show About Us button -->
+        <a href="#" class="about-link" onclick="openAboutModal()">About Us</a>
+        {% endif %}
+      </div>
+    </header>
+    <div class="about-modal" id="aboutModal">
+      <div class="about-content">
+        <h2>About Us</h2>
+        <p>
+          Welcome to the Apple Classifier app! Our mission is to make
+          classification simple and accessible for everyone—whether you’re a
+          farmer, a researcher, or just curious. The problem we solve are
+          Farmers, food processors, and consumers face challenges in identifying
+          fruit varieties accurately, leading to inefficiencies and
+          misidentification. Our platform bridges this gap with cutting-edge
+          solutions.
+        </p>
+        <p>
+          Make sure to upload apple image for prediction. As of now it may
+          predict other random images but it can classify apple images
+          accurately because We’ve achieved 100% classification accuracy using
+          DenseNet201 and KNN(K-nearest neighbor). Our platform leverages the
+          latest technologies including Flask, MySQL, TensorFlow, DenseNet201,
+          and KNN to deliver seamless performance.
+        </p>
+        <strong>Email us at:</strong>
+        <p>sudarshan.bam@patancollege.edu.np</p>
+        <button class="close-modal" onclick="closeAboutModal()">Close</button>
+      </div>
+    </div>
+    <script>
+      function openAboutModal() {
+        document.getElementById("aboutModal").style.display = "flex";
+      }
+      function closeAboutModal() {
+        document.getElementById("aboutModal").style.display = "none";
+      }
+    </script>
+  </body>
+</html>
