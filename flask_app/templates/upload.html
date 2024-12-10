@@ -182,6 +182,7 @@
       {% if predicted_class %}
       <div class="result">
         <h2>Predicted Class: {{ predicted_class }}</h2>
+        <p>Confidence: {{ "%.2f"|format(confidence_score) }}%</p>
       </div>
       {% endif %}
     </div>
@@ -210,8 +211,18 @@
           reader.readAsDataURL(file);
         }
       }
+
       function showLoadingMessage() {
         document.getElementById("loading-message").style.display = "block";
+
+        // Clear previous result
+        const resultContainer = document.querySelector(".result");
+        if (resultContainer) {
+          resultContainer.innerHTML = ""; // Clear previous prediction results
+        }
+
+        const flashMessages = document.querySelectorAll(".alert");
+        flashMessages.forEach((message) => message.remove());
       }
     </script>
   </body>

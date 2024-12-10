@@ -40,6 +40,17 @@
   <body>
     <div class="container">
       <h1>Register</h1>
+      <!-- Flash messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %} {% for category, message in messages %}
+      <div
+        class="alert alert-{{ category }}"
+        style="color: red; margin-top: 10px"
+      >
+        {{ message }}
+      </div>
+      {% endfor %} {% endif %} {% endwith %}
+
       <form action="/register" method="POST" onsubmit="validateForm(event)">
         <input
           id="username"

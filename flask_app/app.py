@@ -4,9 +4,11 @@ from flask_mysqldb import MySQL
 import tensorflow as tf
 import joblib
 import numpy as np
+
 from werkzeug.utils import secure_filename
 import os
 from tensorflow.keras.applications import DenseNet201
+from sklearn.metrics import accuracy_score
 
 # Flask app setup
 app = Flask(__name__)
@@ -98,6 +100,8 @@ def login():
 
     return render_template('login.html')
 
+
+
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
     """Handle file upload and prediction."""
@@ -106,6 +110,7 @@ def upload():
         return redirect(url_for('home'))
 
     predicted_class = None
+    confidence_score = None
 
     if request.method == 'POST':
         if 'file' not in request.files:
@@ -126,29 +131,34 @@ def upload():
 
                 # Extract features
                 feature_extractor = DenseNet201(weights='imagenet', include_top=False, input_shape=(224, 224, 3))
-                feature_extractor.trainable = False  # Freeze DenseNet201
+                feature_extractor.trainable = False
                 features = feature_extractor.predict(image_array)
                 features = features.reshape(1, -1)
 
-                # Predict class
-                prediction = knn_model.predict(features)
-                predicted_class = list(knn_model.classes_)[prediction[0]]
-                idx_to_class = {0: 'apple_6',
-                    1: 'apple_braeburn_1',
-                    2: 'apple_crimson_snow_1',
-                    3: 'apple_golden_1',
-                    4: 'apple_golden_2',
-                    5: 'apple_golden_3',
-                    6: 'apple_granny_smith_1',
-                    7: 'apple_hit_1',
-                    8: 'apple_pink_lady_1',   
-                    9: 'apple_red_1',
-                    10: 'apple_red_2',
-                    11: 'apple_red_3',
-                    12: 'apple_red_delicios_1',
-                    13: 'apple_red_yellow_1',
-                    14: 'apple_rotten_1'}
-                flash(f'Predicted class: {idx_to_class[predicted_class]}', 'success')
+                # Predict class using KNN
+                prediction_probabilities = knn_model.predict_proba(features)
+                confidence_score = np.max(prediction_probabilities) * 100  # Convert to percentage
+
+                if confidence_score >= 85:
+                    predicted_class_index = np.argmax(prediction_probabilities)
+                    idx_to_class = {0: 'Apple Braeburn',
+                                    1: 'Apple Crimson Snow',
+                                    2: 'Apple Golden 1',
+                                    3: 'Apple Golden 2',
+                                    4: 'Apple Golden 3',
+                                    5: 'Apple Granny Smith',
+                                    6: 'Apple Pink Lady',
+                                    7: 'Apple Red 1',
+                                    8: 'Apple Red 2',
+                                    9: 'Apple Red 3',
+                                    10: 'Apple Red Delicious',
+                                    11: 'Apple Red Yellow 1',
+                                    12: 'Apple Red Yellow 2'}
+                    predicted_class = idx_to_class.get(predicted_class_index, "Unknown")
+                    flash(f'Predicted class: {predicted_class} with confidence: {confidence_score:.2f}%', 'success')
+                else:
+                    predicted_class = "Please choose a proper apple image"
+                    flash('The uploaded image is not recognized as an apple with sufficient confidence.', 'warning')
             except Exception as e:
                 flash(f'Error during prediction: {str(e)}', 'danger')
             finally:
@@ -156,7 +166,11 @@ def upload():
         else:
             flash('Invalid file type. Allowed types: jpg, jpeg, png.', 'danger')
 
-    return render_template('upload.html', predicted_class=predicted_class)
+    return render_template(
+        'upload.html',
+        predicted_class=predicted_class,
+        confidence_score=confidence_score
+    )
 
 @app.route('/logout')
 def logout():
